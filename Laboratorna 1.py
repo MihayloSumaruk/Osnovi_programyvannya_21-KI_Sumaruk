@@ -4,6 +4,9 @@ b = "Михайло"
 print(b)
 c = "Сумарук"
 print(c)
-d = "16 років"
+d = 16
 print(d)
-print("Змінні, a, b і c мають тип - str,", "а змінна d - int")
+print(a, type(a))
+print(b, type(b))
+print(c, type(c))
+print(d, type(d))
