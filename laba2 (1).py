@@ -1,6 +1,6 @@
 a = "Михайло"
 b = "Сумарук"
-c = "Сумарук"
+c = 16
 list1=[a, b, c]
 print(list1)
 list2=[type(a), type(b), type(c)]
