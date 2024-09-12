@@ -8,5 +8,5 @@ print(list2)
 if type(a) == type(b) and type(b) == type(c) and type(a) == type(c):
     print("Тип str, повторюється найчастіше")
 else:
-    print("Тип даних незбігаються")
+    print("Тип int неповторюється")
     
