@@ -1,0 +1,9 @@
+def sortyvannya(lst):
+    unique_list = list(set(lst))
+    numbers = [x for x in unique_list if type(x) in (int, float)]
+    strings = [x for x in unique_list if type(x) == str]
+    return sorted(numbers) + sorted(strings)
+nesort_spisok = list(map(int and str, input("Введіть список чисел через пробіл: ").split()))
+sort_spisok = sortyvannya(nesort_spisok)
+print(nesort_spisok)
+print(sort_spisok)
