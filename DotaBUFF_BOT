@@ -1,24 +1,29 @@
 import telebot
 from telebot import types
-import requests
-from bs4 import BeautifulSoup
+
 TOKEN = "7917996670:AAF6oM79ZcD2TkubCNY97ckLQIAPO85L10o"
 bot = telebot.TeleBot(TOKEN)
-user_states = {}
-cache = {}
+RANKS_URL_MAP = {
+    "Herald": "herald", "Guardian": "guardian", "Crusader": "crusader",
+    "Archon": "archon", "Legend": "legend", "Ancient": "ancient",
+    "Divine": "divine", "Immortal": "immortal"
+}
+ROLES_URL_MAP = {
+    "Carry": "core-safe", "Mid": "core-mid", "Offlaner": "core-off",
+    "Soft Support": "support-safe", "Hard Support": "support-off"
+}
 BASE_URL = "https://uk.dotabuff.com/heroes?show=facets&view=meta&mode=all-pick&date=7d&rankTier={rank}&position={position}"
-RANKS_URL_MAP = {"Herald": "herald", "Guardian": "guardian", "Crusader": "crusader", "Archon": "archon", "Legend": "legend", "Ancient": "ancient", "Divine": "divine", "Immortal": "immortal"}
-ROLES_URL_MAP = {"Carry": "core-safe", "Mid": "core-mid", "Offlaner": "core-off", "Soft Support": "support-safe", "Hard Support": "support-off"}
+user_states = {}
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, "Радий вітати вас! Я WIKI-Telegram Бот, який допоможе вам з освоєнням DotaBuff-у. Для початку виберіть свій рейтинг. Використайте команду /Ranked")
+    bot.send_message(message.chat.id, "Радий вітати вас! Я WIKI-Telegram Бот, який допоможе вам з освоєнням DotaBuff. Для початку виберіть своє звання. Використайте команду /Ranked")
 @bot.message_handler(commands=['Ranked'])
 def Ranked(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     ranks = list(RANKS_URL_MAP.keys())
     for i in range(0, len(ranks), 2):
         markup.row(types.KeyboardButton(ranks[i]), types.KeyboardButton(ranks[i+1]))
-    bot.send_message(message.chat.id, "Виберіть звання:", reply_markup=markup)
+    bot.send_message(message.chat.id, "Виберіть ваше звання:", reply_markup=markup)
 @bot.message_handler(content_types=['text'])
 def process_text(message):
     ranks = list(RANKS_URL_MAP.keys())
@@ -33,10 +38,7 @@ def process_text(message):
             rank = user_states[message.chat.id]['rank']
             role = message.text
             url = generate_url(rank, role)
-            if url in cache:
-                bot.send_message(message.chat.id, cache[url])
-            else:
-                parse_dotabuff_data(url, message)
+            bot.send_message(message.chat.id, f"Ось стаття яка допоможе вам ознайомитись: {url}")
         else:
             bot.send_message(message.chat.id, "Спочатку оберіть звання за допомогою команди /Ranked.")
     elif message.text == "Назад":
@@ -53,23 +55,4 @@ def generate_url(rank, role):
     rank_param = RANKS_URL_MAP.get(rank, "herald")
     role_param = ROLES_URL_MAP.get(role, "core-safe")
     return BASE_URL.format(rank=rank_param, position=role_param)
-def parse_dotabuff_data(url, message):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
-        heroes = []
-        table = soup.find('table', class_='sortable')
-        if table:
-            rows = table.find_all('tr')[1:]
-            for row in rows:
-                cols = row.find_all('td')
-                hero_name = cols[1].text.strip()
-                win_rate = cols[3].text.strip()
-                heroes.append(f"{hero_name}: {win_rate}")
-        result = "Ось найкращі герої для обраної ролі:\n" + "\n".join(heroes) if heroes else "Не вдалося знайти дані для цієї комбінації."
-        cache[url] = result
-        bot.send_message(message.chat.id, result)
-    except requests.exceptions.RequestException as e:
-        bot.send_message(message.chat.id, f"Сталася помилка при парсингу: {str(e)}")
 bot.infinity_polling()
