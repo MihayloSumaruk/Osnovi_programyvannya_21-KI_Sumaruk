@@ -1,0 +1,32 @@
+import telebot
+
+import os
+from dotenv import load_dotenv
+
+from handlers.start import start
+from handlers.ranked import ranked
+from handlers.process_text import process_text
+user_states = {}
+
+def get_token():
+    load_dotenv("token.env")
+    return os.environ.get('TOKEN')
+TOKEN = get_token()
+bot = telebot.TeleBot(TOKEN)
+
+def main():
+    @bot.message_handler(commands=['start'])
+    def handle_start(message):
+        start(bot, message)
+    @bot.message_handler(commands=['ranked'])
+    def handle_ranked(message):
+        ranked(bot, message)
+    @bot.message_handler(content_types=['text'])
+    def handle_text(message):
+        process_text(bot, message, user_states)
+    bot.infinity_polling()
+if __name__ == "__main__":
+    main()
+
+
+
