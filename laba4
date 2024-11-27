@@ -1,9 +1,12 @@
+def convert_input_to_list(input_string):
+    return [int(x) if x.isdigit() else x for x in input_string.split()]
 def sortyvannya(lst):
     unique_list = list(set(lst))
-    numbers = [x for x in unique_list if type(x) in (int, float)]
-    strings = [x for x in unique_list if type(x) == str]
-    return sorted(numbers) + sorted(strings)
-nesort_spisok = list(map(int and str, input("Введіть список чисел через пробіл: ").split()))
+    numbers = sorted([x for x in unique_list if type(x) in (int, float)])
+    strings = sorted([x for x in unique_list if type(x) == str])
+    return numbers + strings
+input_string = input("Введіть список чисел через пробіл: ")
+nesort_spisok = convert_input_to_list(input_string)
 sort_spisok = sortyvannya(nesort_spisok)
-print(nesort_spisok)
-print(sort_spisok)
+print("Невідсортований список:", nesort_spisok)
+print("Відсортований список:", sort_spisok)
