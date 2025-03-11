@@ -22,7 +22,6 @@ class DochClass(Osnova):
         self.adress = adress
         self.hobbi = hobbi
 
-    # Метод 1: Розрахунок до повноліття
     def age_to_adulthood(self, current_year):
         age = self.rozrahynok_age(current_year)
         if age is None:
@@ -31,7 +30,6 @@ class DochClass(Osnova):
             return "Ви повнолітні"
         return f"До повноліття вам залишилось: {18 - age} років"
 
-    # Метод 2: Вітання залежно від часу доби
     def greeting(self, hour):
         if not self.name:
             return "Привіт!"
@@ -44,7 +42,6 @@ class DochClass(Osnova):
         else:
             return f"Доброї ночі, {self.name}!"
 
-    # Метод для виведення всіх додаткових даних
     def additional_info(self):
         return (
             f"По батькові: {self.father_name}\n"
@@ -56,7 +53,6 @@ class DochClass(Osnova):
         )
 
 person = DochClass("Михайло", "Сумарук", 2008, "Андрійович", "Луцьк", "+380501234567", "lutskhour@ukr.net", "Тиха 10", "Плавання")
-
 print("Вас звуть: ", person.full_name())
 print("Ваш вік: ", person.rozrahynok_age(2025))
 print(person.age_to_adulthood(2025))
